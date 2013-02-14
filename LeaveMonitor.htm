@@ -1,0 +1,164 @@
+﻿<!DOCTYPE>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link type="text/css" rel="Stylesheet" href="Css/jquery-ui-1.10.0.custom.min.css" />
+    <link type="text/css" rel="Stylesheet" href="Css/LeaveMonitor.css" />
+    <title>Leave Monitor</title>
+</head>
+<body>
+    <script type="text/javascript" src="jQuery/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="jQuery/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript" src="jQuery/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="jQuery/json2.js"></script>
+    <script type="text/javascript" src="Scripts/DateExtender.js"></script>
+    <script type="text/javascript" src="Scripts/Memory.js"></script>
+    <script type="text/javascript" src="Scripts/Leave.js"></script>
+    <script type="text/javascript" src="Scripts/PayPeriod.js"></script>
+    <script type="text/javascript" src="Scripts/datetime.js"></script>
+    <script type="text/javascript" src="Scripts/Utility.js"></script>
+    <h1>
+        Leave Monitor</h1>
+    <h2>
+        <div id="UserName">
+            Bill Bomar</div>
+    </h2>
+    <div id="tabs">
+        <ul>
+            <li><a href="#MainTab">Leave Balances</a></li>
+            <li><a href="#LeaveReportTab">Leave Report</a></li>
+            <li><a href="#TakeLeaveTab">Take Leave</a></li>
+            <li><a href="#SettingTab">Settings</a></li>
+        </ul>
+        <div id="MainTab" class='tab'>
+            <fieldset>
+                <legend>
+                    <label>
+                        Current Pay Period Start Date:</label>
+                    <input id="CurrentPayPeriodDisplay" disabled="disabled" type="text" /></legend>
+                <label id="AnnualBalances">
+                    Annual Balance</label><br />
+                    <div id='LeaveBuffers' style='float:right; width:200px;'>
+                        <fieldset>
+                            <legend>Leave Buffer</legend>
+                            <table>
+                                <tr>
+                                    <td class="BufferColumn">
+                                        <label>Annual Buffer: </label>
+                                    </td>
+                                    <td class="BufferValueColumn">
+                                        <label id='AnnualBufferValue'></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="BufferColumn">
+                                        <label>Sick Buffer: </label>
+                                    </td>
+                                    <td class="BufferValueColumn">
+                                        <label id='SickBufferValue'></label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
+                <input id="AnnualBalanceDisplay" disabled="disabled" type="text" class='balanceDisplay' /><br /><br />
+                <label>
+                    Sick Balance</label><br />
+                <input id="SickLeaveBalanceDisplay" disabled="disabled" type="text" class='balanceDisplay' /><br /><br />
+                <label>
+                    Comp Time Balance</label><br />
+                <input id="CompTimeBalanceDisplay" disabled="disabled" type="text" class='balanceDisplay' /><input id='AddCompTime' type='button' value='Add Comp Time'<br /><br />
+            </fieldset>
+            <div class='buttonContainer'>
+                <input type='button' value='Reset All' id='Reset' class='buttons' />
+            </div>
+            <div id='CompTimeDialog'>
+                Enter any comp time earned here by day. Time will be added to any balance recorded. <br />
+                <br />
+                <label for='CompEarnDate'>Date Comp Time Earned:</label><input id='CompEarnDate' type='text' /><br />
+                <label for='CompEarned'>Amount Earned:</label><input id='CompEarned' type='text' />
+            </div>
+            
+        </div>
+        <div id="LeaveReportTab" class='tab'>
+            <label>
+                Annual Leave Taken:</label><br />
+            <table id='AnnualLeaveTable' class='LeaveTable'>
+                <tbody>
+                </tbody>
+            </table>
+            <label>
+                Sick Leave Taken:</label><br />
+            <table id='SickLeaveTable' class='LeaveTable'>
+                <tbody>
+                </tbody>
+            </table>
+			<label>
+                Comp Time Earned:</label><br />
+            <table id='CompEarnTable' class='LeaveTable'>
+                <tbody>
+                </tbody>
+            </table>
+			<label>
+                Comp Time Taken:</label><br />
+            <table id='CompTakeTable' class='LeaveTable'>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div id="TakeLeaveTab" class='tab'>
+            <div  id="AnticipatedLeaveContainer" style='width:250px;float:right;';> 
+                <fieldset>
+                <legend>Leave Balances</legend>
+                <label>Annual:</label><label id='AnticipatedLeave' class='LeaveDisplay'></label><br />
+                <label>Sick:</label><label id='AnticipatedSick' class='LeaveDisplay'></label><br />
+                <label>Comp:</label><label id='AnticipatedComp' class='LeaveDisplay'></label><br />
+                </fieldset>
+            </div>
+            <label id="LeaveDateLabel" for="LeaveDate">
+                Leave date:</label>&nbsp&nbsp&nbsp&nbsp<input id="LeaveDate" type="text" />
+            <br />
+            <br />
+            <label id="LeaveHoursLabel" for="LeaveHoursValue">
+                Hours Taken:</label>&nbsp&nbsp<input id="LeaveHoursValue" type="text" /><label id="ErrorDisplay" class='error'></label>
+            <br />
+            <br />
+            <div style="width: 170px;">
+                &nbsp&nbsp&nbsp&nbsp<input id="Annual" type="radio" checked="checked" onclick="Leave.ToggleLeaveRadioButtons(this.id);" /><label
+                    for="Annual">Annual Leave</label>
+                <br />
+                &nbsp&nbsp&nbsp&nbsp<input id="Sick" type="radio" onclick="Leave.ToggleLeaveRadioButtons(this.id);" /><label
+                    for="Sick">Sick Leave</label>
+                <br />
+                &nbsp&nbsp&nbsp&nbsp<input id="CompTake" type="radio" onclick="Leave.ToggleLeaveRadioButtons(this.id);" /><label
+                    for="Comp">Comp Leave</label>
+            </div>
+            <div class='buttonContainer'>
+                <input type="button" value='Save' id='SaveLeave' />
+            </div>
+            <div id='LeaveBalanceExceededDialog'>This entry would exceed your availble amount of leave. Please correct the amount of leave or select a diffect type of leave to complete this entry.</div>
+        </div>
+        <div id="SettingTab" class='tab'>
+            <label for='PayPeriodRecordDate' class='settings'>
+                Pay Period:</label><input id='PayPeriodRecordDate' disabled="disabled" type="text" /><br />
+            <label for="UserName" class='settings'>
+                User Name:</label><input id="UserNameValue" type="text" /><br />
+            <label for="AnnualBalance" class='settings'>
+                Annual Leave Balance:</label><input id="AnnualBalance" type="text" /><br />
+            <label for="SickBalance" class='settings'>
+                Sick Leave Balance:</label><input id="SickBalance" type="text" /><br />
+            <label for="AnnualAccrual" class='settings'>
+                Annual Accrual Rate:</label><input id="AnnualAccrual" type="text" /><br />
+            <label for="SickAccrual" class='settings'>
+                Sick Accrual Rate:</label><input id="SickAccrual" type="text" /><br />
+            <br />
+            <div class='buttonContainer'>
+                <input id="SaveSettingsButton" type="button" value="Save Settings"
+                    class="buttons" />
+                <input id="CancelSettings" type="button" value="Cancel" class='buttons' /></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        
+    </script>
+</body>
+</html>
