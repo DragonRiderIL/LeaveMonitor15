@@ -1,4 +1,7 @@
-﻿var Memory = (function () {
+/// <reference path="Utility.js" />
+/// <reference path="PayPeriod.js" />
+
+var Memory = (function () {
     return {
         _appStore: [],
         _records: [],
@@ -66,6 +69,41 @@
             if (Memory._appStore.Records) {
                 Memory._records = Memory._appStore.Records;
             };
+        },
+
+        GetFilteredLeaveRecords: function (recordFilter, typeLeave) {
+            var records = Memory.GetLeaveRecords(), 
+                filteredRecords = [];
+
+            $.each(records, function () {
+                if (this['TypeLeave'] === typeLeave) {
+                    var recordDate = new Date(this['LeaveDate']);
+                    switch (recordFilter) {
+                        case 'Current':
+                            if (recordDate >= LeaveMonitor.CurrentPayPeriod && recordDate <= PayPeriod.GetPayPeriodEndDate()) {
+                                filteredRecords.push(this);
+                            };
+                            break;
+                        case 'YTD':
+                            if (recordDate.year === (new Date()).year && recordDate <= PayPeriod.GetPayPeriodEndDate()) {
+                                filteredRecords.push(this);
+                            };
+                            break;
+                        case 'All':
+                            if (recordDate <= PayPeriod.GetPayPeriodEndDate()) {
+                                filteredRecords.push(this);
+                            };
+                            break;
+                        case 'Future':
+                            if (recordDate > PayPeriod.GetPayPeriodEndDate()) {
+                                filteredRecords.push(this);
+                            };
+                            break;
+                    };
+                };
+            });
+
+            return filteredRecords;
         },
 
         GetFutureLeave: function () {
