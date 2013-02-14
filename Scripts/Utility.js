@@ -1,4 +1,9 @@
-﻿$(document).ready(function () {
+/// <reference path="Leave.js" />
+/// <reference path="Memory.js" />
+/// <reference path="PayPeriod.js" />
+/// <reference path="../jQuery/jquery-1.6.2.min.js" />
+
+$(document).ready(function () {
     LeaveMonitor.InitializeLeaveMonitor();
 });
 
@@ -53,7 +58,8 @@ var LeaveMonitor = (function () {
             $('#ErrorDisplay').hide();
             $('#AddCompTime').click(LeaveMonitor._addCompTime);
             $('#TakeLeaveTab').click();
-            $('SaveSettingsButton').click(LeaveMonitor._saveBaseValues);
+            $('SaveSettingsButton').click(LeaveMonitor._saveBaseValues);                            $('[value="Current"]').prop("checked", true);
+            $('[id|="Report"]').click(LeaveMonitor._reportToggle);
         },
 
         _refreshPageValues: function () {
@@ -176,20 +182,31 @@ var LeaveMonitor = (function () {
         },
 
         _populateReportPage: function () {
-            $('#AnnualLeaveTable > tbody').empty();
-            $('#SickLeaveTable > tbody').empty();
-            $('#CompEarnTable > tbody').empty();
-            $('#CompTakeTable > tbody').empty();
+            var currentFilter = $('[id|="Report"]:checked').val();
+
+            LeaveMonitor._emptyReportTables();
+
             $.template('RecordsMarkup', LeaveMonitor._leaveMarkup);
-            $.tmpl('RecordsMarkup', LeaveMonitor.AnnualRecords).appendTo($('#AnnualLeaveTable'));
-            $.tmpl('RecordsMarkup', LeaveMonitor.SickRecords).appendTo($('#SickLeaveTable'));
-            $.tmpl('RecordsMarkup', LeaveMonitor.CompAddRecords).appendTo($('#CompEarnTable'));
-            $.tmpl('RecordsMarkup', LeaveMonitor.CompTakeRecords).appendTo($('#CompTakeTable'));
-            //$('table#NsnTable tr:even').css('background-color', '#DBE2E2').css('border-color', '#DBE2E2');
+
+            $.tmpl('RecordsMarkup', Memory.GetFilteredLeaveRecords(currentFilter, "Annual")).appendTo($('#AnnualLeaveTable'));
+            $.tmpl('RecordsMarkup', Memory.GetFilteredLeaveRecords(currentFilter, "Sick")).appendTo($('#SickLeaveTable'));
+            $.tmpl('RecordsMarkup', Memory.GetFilteredLeaveRecords(currentFilter, "CompAdd")).appendTo($('#CompEarnTable'));
+            $.tmpl('RecordsMarkup', Memory.GetFilteredLeaveRecords(currentFilter, "CompTake")).appendTo($('#CompTakeTable'));
+            LeaveMonitor._paintReportTable();
+        },
+
+        _paintReportTable: function () {
             $('table#AnnualLeaveTable tr:even').css('background-color', '#8AB8E6').css('border-color', '#8AB8E6');
             $('table#SickLeaveTable tr:even').css('background-color', '#8AB8E6').css('border-color', '#8AB8E6');
             $('table#CompEarnTable tr:even').css('background-color', '#8AB8E6').css('border-color', '#8AB8E6');
             $('table#CompTakeTable tr:even').css('background-color', '#8AB8E6').css('border-color', '#8AB8E6');
+        },
+
+        _emptyReportTables: function () {
+            $('#AnnualLeaveTable > tbody').empty();
+            $('#SickLeaveTable > tbody').empty();
+            $('#CompEarnTable > tbody').empty();
+            $('#CompTakeTable > tbody').empty();
         },
 
         _getBaseValues: function () {
@@ -349,6 +366,19 @@ var LeaveMonitor = (function () {
 
             $("#tabs").tabs("option", "active", 0);
             $("#tabs").tabs("option", "disabled", [3]);
+        },
+
+        _reportToggle: function (report) {
+            var reports = $('[id|="Report"]');
+            var selection = $(report.currentTarget);
+
+            $.each(reports, function () {
+                if (this.value !== $(selection).val()) {
+                    $(this).prop("checked", false);
+                };
+            });
+
+            LeaveMonitor._populateReportPage();
         },
 
         ToggleLeaveRadioButtons: function (itemSelected) {
