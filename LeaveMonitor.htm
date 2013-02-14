@@ -1,4 +1,4 @@
-﻿<!DOCTYPE>
+<!DOCTYPE>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <link type="text/css" rel="Stylesheet" href="Css/jquery-ui-1.10.0.custom.min.css" />
@@ -82,6 +82,15 @@
         <div id="LeaveReportTab" class='tab'>
             <label>
                 Annual Leave Taken:</label><br />
+                <div style="float:right;">
+                    <fieldset>
+                        <legend>Report Type</legend>
+                        <input id="Report-1" type="radio" value="Current"/><label>Current Pay Period</label><br />
+                        <input id="Report-2" type="radio" value="YTD"/><label>Year to Date</label><br />
+                        <input id="Report-3" type="radio" value="All"/><label>All Records</label><br />
+                        <input id="Report-4" type="radio" value="Future"/><label>Future Leave</label><br />
+                    </fieldset>
+                </div>
             <table id='AnnualLeaveTable' class='LeaveTable'>
                 <tbody>
                 </tbody>
